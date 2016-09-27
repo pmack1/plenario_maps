@@ -12,6 +12,6 @@ trees  = "http://plenar.io/v1/api/grid/?obs_date__ge=" + year_begin + "&obs_date
 r = requests.get(trees)
 json_out = r.text
 print(r.text)
-with open('mygeojson', 'w') as f:
+with open('mygeojson.json', 'w') as f:
     f.write(r.text)
 f.close()
