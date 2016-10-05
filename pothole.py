@@ -7,7 +7,7 @@ year_begin = str(datetime.datetime.now().year) + "-01-01"
 current_date = str(datetime.datetime.now().year) + "-" + str(datetime.datetime.now().month) + "-" + str(datetime.datetime.now().day)
 
 # call the plenario api to get the relevant data per neighborhood
-potholes  = "http://plenar.io/v1/api/shapes/boundaries_neighborhoods/individual_landmarks?obs_date__ge=" + year_begin + "&obs_date__le=" + current_date + '&dataset_name=311_service_requests_pot_holes_reported&311_service_requests_pot_holes_reported__filter={"op":"eq", "col":"status", "val":"Completed"}'
+potholes  = "http://plenar.io/v1/api/shapes/boundaries_neighborhoods/311_service_requests_pot_holes_reported?obs_date__ge=" + year_begin + "&obs_date__le=" + current_date + '&311_service_requests_pot_holes_reported__filter={"op":"eq", "col":"status", "val":"Completed"}'
 r = requests.get(potholes)
 json_out = r.text
 
