@@ -49,16 +49,6 @@
                           '#FFEDA0';
     }
 
-q1:1 - 188.0
-q2:188.0- 377.0
-q3:377.0- 565.0
-q4:565.0- 753.0
-q5:753.0- 941.0
-q6:941.0- 1130.0
-q7:1130.0- 1338
-
-
-
 
     function style(feature) {
         return {
@@ -137,8 +127,16 @@ q7:1130.0- 1338
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 13, 25, 38, 50, 63, 75],
+            grades = [0, 188, 377, 565, 753, 941, 1130],
             labels = [];
+
+            q1:1 - 188.0
+q2:188.0- 377.0
+q3:377.0- 565.0
+q4:565.0- 753.0
+q5:753.0- 941.0
+q6:941.0- 1130.0
+q7:1130.0- 1338
 
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
