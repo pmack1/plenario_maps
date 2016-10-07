@@ -20,17 +20,17 @@ The [Time Filtering API](http://docs.plenar.io/#time-filtering) was used to filt
 The [Attribute Filtering API](http://docs.plenar.io/#attribute-filtering) was used to filter for only potholes requests that had been completed.
 
 Using Python to make the requests  creating this dataset as a geojson was done in a few lines of code:
-'''
-year_begin = str(datetime.datetime.now().year) + "-01-01"
-current_date = str(datetime.datetime.now().year) + "-" + str(datetime.datetime.now().month) + "-" + str(datetime.datetime.now().day)
 
-potholes  = "http://plenar.io/v1/api/shapes/boundaries_zip_codes/311_service_requests_pot_holes_reported?obs_date__ge=" + year_begin + "&obs_date__le=" + current_date + '&311_service_requests_pot_holes_reported__filter={"op":"eq", "col":"status", "val":"Completed"}'
-r = requests.get(potholes)
-json_out = r.text
-output = json.loads(json_out)
-'''
+    year_begin = str(datetime.datetime.now().year) + "-01-01"
+    current_date = str(datetime.datetime.now().year) + "-" + str(datetime.datetime.now().month) + "-" + str(datetime.datetime.now().day)
+
+    potholes  = "http://plenar.io/v1/api/shapes/boundaries_zip_codes/311_service_requests_pot_holes_reported?obs_date__ge=" + year_begin + "&obs_date__le=" + current_date + '&311_service_requests_pot_holes_reported__filter={"op":"eq", "col":"status", "val":"Completed"}'
+    r = requests.get(potholes)
+    json_out = r.text
+    output = json.loads(json_out)
+
 
 ## Final Output:
-Chicago Map of Potholes per 1000 people Filled Year to Date by Zip Code 
+Chicago Map of Potholes per 1000 people Filled Year to Date by Zip Code
 
 #![Map of Potholes Filled](pothole_static.png)
