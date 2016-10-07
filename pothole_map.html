@@ -39,13 +39,12 @@
 
   L.geoJson(mygeojson).addTo(map);
     function getColor(d) {
-        return d > 30 ? '#800026' :
-               d > 25  ? '#BD0026' :
-               d >  20? '#E31A1C' :
-               d > 15 ? '#FC4E2A' :
-               d > 10   ? '#FD8D3C' :
-               d > 5   ? '#FEB24C' :
-               d > 0  ? '#FED976' :
+        return d > 25  ? '#08519c' :
+               d >  20? '#3182bd' :
+               d > 15 ? '#6baed6' :
+               d > 10   ? '#9ecae1' :
+               d > 5   ? '#c6dbef' :
+               d > 0  ? '#eff3ff' :
                           '#FFEDA0';
     }
     function style(feature) {
