@@ -19,13 +19,36 @@ r = requests.get(potholes)
 json_out = r.text
 output = json.loads(json_out)
 
-# merge on matching zips
-for z1 in output['features']:
-	for z2 in population:
-		if z1['properties']['zip'] == z2[2]:
-			z1['properties']['population'] = int(z2[0])
-			z1['properties']['pothole_per_1000_ppl'] = round(z1['properties']['count'] / (int(z2[0]) / 1000.0), 2) 
+# # combine counts on mulitple entry zip codes. Note some zip codes are noncontigious and thus listed twice as separate polygons.
+# Their counts should be combined:
+total = {}
+features = []
+observations = []
+zips = []
+[features.append(f) for f in output['features']]
+[observations.append(f['properties']) for f in features]
+[zips.append(obs['zip']) for obs in observations]
 
+multiple = set([z for z in zips if zips.count(z) > 1])
+
+for z in multiple:
+    total[z] = 0
+
+for dup in multiple:
+    for obs in observations:
+        if obs['zip'] == dup:
+            total[dup] += obs['count']
+
+# merge on matching zips
+for  obs in observations:
+    for p in population:
+        if obs['zip'] == p[2]:
+            obs['population'] = int(p[0])
+
+            #replace zips with multiple zip code entries to have count from the total dictionary constructed above
+            if obs['zip'] in multiple:
+                obs['count'] = total[obs['zip']]
+            obs['pothole_per_1000_ppl'] = round(obs['count'] / (int(p[0]) / 1000.0), 2)
 
 
 # save merged datasets to an output geojson file
