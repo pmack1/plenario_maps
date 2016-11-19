@@ -12,11 +12,10 @@ census = "http://api.census.gov/data/2010/sf1?get=P0010001&for=tract:*&in=state:
 r = requests.get(census)
 census = r.text
 census = ast.literal_eval(census)
-#remove the first element from the list as it corresponds to the header
 fieldnames = census.pop(0)
 
 # call the plenario api to get the relevant data per zipcode
-potholes  = "http://plenar.io/v1/api/shapes/boundaries_census_tracts_2010/311_service_requests_pot_holes_reported"
+potholes  = "http://plenar.io/v1/api/shapes/boundaries_census_tracts_2010/311_service_requests_pot_holes_reported?obs_date__ge=" + year_begin + "&obs_date__le=" + current_date + '&311_service_requests_pot_holes_reported__filter={"op":"eq", "col":"status", "val":"Completed"}'
 r = requests.get(potholes)
 json_out = r.text
 output = json.loads(json_out)
@@ -31,8 +30,6 @@ for z1 in output['features']:
         if county == "031":
             if z1['properties']['tractce10'] == tract:
                 z1['properties']['population'] = int(z2[0])
-
-                # a few tracts don't list any people as living there. Give them an undefined value for pothole_per_1000_people
                 if z1['properties']['population'] >  0:
                     z1['properties']['pothole_per_1000_ppl'] = round(z1['properties']['count'] / (population / 1000.0), 2)
                 else:
