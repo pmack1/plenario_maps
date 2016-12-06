@@ -7,9 +7,24 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
-//
-//
-// var marker = L.marker([41.881832, -87.623177]).addTo(map);
+var userRadius = 500;
+$( function() {
+  $( "#slider" ).slider({
+    orientation: "vertical",
+    range: "min",
+    min: 100,
+    max: 1000,
+    value: 500,
+    slide: function( event, ui ) {
+      $( "#amount" ).val( ui.value );
+      userRadius = Number($( "#amount" ).val());
+    }
+  });
+  $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
+} );
+
+
+var marker = L.marker([41.881832, -87.623177]).addTo(map);
 // var marker2 = L.marker([41.891832, -87.65177]).addTo(map);
 
 
@@ -24,14 +39,12 @@ var center1 = {
   }
 };
 
-
-
 var radius = 0.5;
 var steps = 10;
 var units = 'kilometers';
 
 var sensor1 = turf.circle(center1, radius, steps, units);
-var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
+// var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
 
 // var result = {
 //   "type": "FeatureCollection",
@@ -53,7 +66,7 @@ var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
 // }).addTo(map);
 
 //
-// marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
+marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
 // marker2.bindPopup("<b>Sensor 2!</b><br> Place Holder for Sensor Data.")
 
 
