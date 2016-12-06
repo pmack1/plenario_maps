@@ -7,29 +7,54 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
+//
+//
+// var marker = L.marker([41.881832, -87.623177]).addTo(map);
+// var marker2 = L.marker([41.891832, -87.65177]).addTo(map);
 
 
-var marker = L.marker([41.881832, -87.623177]).addTo(map);
-var marker2 = L.marker([41.891832, -87.65177]).addTo(map);
+var center1 = {
+  "type": "Feature",
+  "properties": {
+    "marker-color": "#0f0"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-87.623177, 41.881832]
+  }
+};
 
-var circle = L.circle([41.881832, -87.623177], {
-  color: 'black',
-  fillColor: '#7fcdbb',
-  fillOpacity: 0.5,
-  radius: 500
-}).addTo(map);
 
- var circle2 = L.circle([41.891832, -87.65177], {
-  color: 'green',
-  fillColor: '#7fcdbb',
-  fillOpacity: 0.5,
-  radius: 500
-}).addTo(map);
 
-var circle_geojson = circle.toGeoJSON()
+var radius = 0.5;
+var steps = 10;
+var units = 'kilometers';
 
-marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
-marker2.bindPopup("<b>Sensor 2!</b><br> Place Holder for Sensor Data.")
+var sensor1 = turf.circle(center1, radius, steps, units);
+var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
+
+// var result = {
+//   "type": "FeatureCollection",
+//   "features": [center, circle]
+// };
+// var sensor1 = L.circle([41.881832, -87.623177], {
+//   color: 'black',
+//   fillColor: '#7fcdbb',
+//   fillOpacity: 0.5,
+//   radius: 500
+// });
+// ]
+
+//  var circle2 = L.circle([41.891832, -87.65177], {
+//   color: 'green',
+//   fillColor: '#7fcdbb',
+//   fillOpacity: 0.5,
+//   radius: 500
+// }).addTo(map);
+
+//
+// marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
+// marker2.bindPopup("<b>Sensor 2!</b><br> Place Holder for Sensor Data.")
 
 
 var drawnItems = new L.FeatureGroup();
@@ -56,9 +81,13 @@ var drawnItems = new L.FeatureGroup();
      var route = map.on('draw:created', function (e) {
          var type = e.layerType,
              route = e.layer;
-         drawnItems.addLayer(route);
-         console.log(route);
-         var intersection = turf.intersect(route.toGeoJSON(), circle_geojson);
+        //  drawnItems.addLayer(route);
+         var route_geojson = route.toGeoJSON()
+         var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
+         var leaflet_route = L.geoJson(small_polygon_route)
+         drawnItems.addLayer(leaflet_route)
+         var intersection = turf.intersect(small_polygon_route, sensor1);
+         console.log(intersection);
          return(intersection);
      });
 
