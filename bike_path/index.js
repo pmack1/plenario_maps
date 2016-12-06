@@ -7,6 +7,53 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
+
+// var test = new Array();
+var test = $.ajax({
+  type: 'GET',
+  url: "http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/",
+  async: false,
+  dataType: 'json',
+  success: function (data) {
+    var nodes = data.data;
+
+    for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    var coordinates = node.geometry.coordinates;
+    var name = node.properties.id
+    var sensors = node.properties.sensors
+    console.log(name)
+    console.log(sensors)
+    console.log(coordinates)
+
+}
+
+
+
+  }
+});
+
+
+
+
+
+
+
+// var node_query = $.get("http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/", function(data, status) {
+//   return data;
+//         });
+//
+
+
+
+
+
+
+
+
+
+
+
 var marker = L.marker([41.881832, -87.623177]).addTo(map);
 
 var center1 = {
@@ -78,6 +125,5 @@ var drawnItems = new L.FeatureGroup();
          var leaflet_route = L.geoJson(small_polygon_route)
          drawnItems.addLayer(leaflet_route)
          var intersection = turf.intersect(small_polygon_route, sensor1);
-         console.log(intersection);
          return(intersection);
      });

@@ -4,22 +4,33 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.3/leaflet.draw.css"/>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://npmcdn.com/@turf/turf@3.5.1/turf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet-src.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.3/leaflet.draw.js"></script>
   <script src="Encoding/Polyline.encoded.js"></script>
   <script src="https://npmcdn.com/@turf/turf@3.5.1/turf.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <style>
     #map{ height: 100% }
-
   </style>
 </head>
 <body>
 
   <div id="map"></div>
+
+  <p>
+    <label for="amount">Distance In Meters:</label>
+    <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+  </p>
+
+<div id="slider" style="height:100px;"></div>
+
+
   <script src="index.js">
   </script>
 
-    </body>
-    </html>
+</body>
+</html>
