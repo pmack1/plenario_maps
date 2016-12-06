@@ -7,26 +7,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
-var userRadius = 500;
-$( function() {
-  $( "#slider" ).slider({
-    orientation: "vertical",
-    range: "min",
-    min: 100,
-    max: 1000,
-    value: 500,
-    slide: function( event, ui ) {
-      $( "#amount" ).val( ui.value );
-      userRadius = Number($( "#amount" ).val());
-    }
-  });
-  $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
-} );
-
-
 var marker = L.marker([41.881832, -87.623177]).addTo(map);
-// var marker2 = L.marker([41.891832, -87.65177]).addTo(map);
-
 
 var center1 = {
   "type": "Feature",
@@ -39,36 +20,34 @@ var center1 = {
   }
 };
 
-// var radius = userRadius;
 var steps = 10;
 var units = 'meters';
 
+
+var userRadius = 500;
 var sensor1 = turf.circle(center1, userRadius, steps, units);
-// var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
 
-// var result = {
-//   "type": "FeatureCollection",
-//   "features": [center, circle]
-// };
-// var sensor1 = L.circle([41.881832, -87.623177], {
-//   color: 'black',
-//   fillColor: '#7fcdbb',
-//   fillOpacity: 0.5,
-//   radius: 500
-// });
-// ]
+$( function() {
+  $( "#slider" ).slider({
+    orientation: "vertical",
+    range: "min",
+    min: 100,
+    max: 1000,
+    value: 500,
+    slide: function( event, ui ) {
+      $( "#amount" ).val( ui.value );
+      userRadius = Number($( "#amount" ).val());
+      sensor1 = turf.circle(center1, userRadius, steps, units);
+    }
+  });
 
-//  var circle2 = L.circle([41.891832, -87.65177], {
-//   color: 'green',
-//   fillColor: '#7fcdbb',
-//   fillOpacity: 0.5,
-//   radius: 500
-// }).addTo(map);
+  $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
+} );
 
-//
+
+
+
 marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
-// marker2.bindPopup("<b>Sensor 2!</b><br> Place Holder for Sensor Data.")
-
 
 var drawnItems = new L.FeatureGroup();
      map.addLayer(drawnItems);
@@ -91,11 +70,9 @@ var drawnItems = new L.FeatureGroup();
      });
      map.addControl(drawControl);
 
-
      var route = map.on('draw:created', function (e) {
          var type = e.layerType,
              route = e.layer;
-        //  drawnItems.addLayer(route);
          var route_geojson = route.toGeoJSON()
          var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
          var leaflet_route = L.geoJson(small_polygon_route)
@@ -104,10 +81,3 @@ var drawnItems = new L.FeatureGroup();
          console.log(intersection);
          return(intersection);
      });
-
-
-
-// ded = "igu~Frr{uO\\n@`@x@JTDLBJBLBLBJ@L@L@P?RFjEB`E@dA?D@l@AR?hC@hDDrG?B@nA@z@?@?FDpG?hD@jA?JIf@Aj@KtCW~EEz@?BABGbAGx@MnAG^ETEXId@Mr@e@fCKn@Il@SfAG`@I\\Gj@A\\?d@@^D^FZJ\\N\\JTNTTTRJVJXHRBR?RCPCLETKRMPONSNYL]Ja@Fa@B]@[Ce@Ae@Ao@Ac@A_@Aa@?[@[D_@D_@D[HYHWJU";
-// var encoded = "u`s~Fz|xuOPDe@NS?@z@?xAY?aC@sAD{A@aCTO@I@Ab@@rA?hA?|@?dDBzZ?zGeC@}EBqBDW@@~DAlF@fCBXEBKF{CxCoBfB_@TYLYDe@Da@AU?qCC{HJeDF}C?\\n@l@nAHXLt@J~FDlG@tJNhZ@vAIf@Aj@KtCW~EE~@IfAUhC]tBiAxGm@rDAbAF~@Rx@Zr@d@j@j@Vl@Lf@C^Ih@Y`@c@\\w@RcADy@I_DCaA@w@J_ANu@Tm@"
-
-// var polyline = L.Polyline.fromEncoded(encoded).addTo(map);
