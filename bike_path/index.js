@@ -39,11 +39,11 @@ var center1 = {
   }
 };
 
-var radius = 0.5;
+// var radius = userRadius;
 var steps = 10;
-var units = 'kilometers';
+var units = 'meters';
 
-var sensor1 = turf.circle(center1, radius, steps, units);
+var sensor1 = turf.circle(center1, userRadius, steps, units);
 // var sensor1_leaflet = L.geoJson(sensor1).addTo(map)
 
 // var result = {
@@ -90,6 +90,7 @@ var drawnItems = new L.FeatureGroup();
          }
      });
      map.addControl(drawControl);
+
 
      var route = map.on('draw:created', function (e) {
          var type = e.layerType,
