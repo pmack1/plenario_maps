@@ -7,29 +7,28 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
+// load node information from plenario
+var nodes = new Array();
 
-// var test = new Array();
-var test = $.ajax({
+function node(name,coordinates,sensors)
+{
+   this.name=name;
+   this.coordinates=coordinates;
+   this.sensors=sensors;
+};
+
+$.ajax({
   type: 'GET',
   url: "http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/",
   async: false,
   dataType: 'json',
   success: function (data) {
-    var nodes = data.data;
-
-    for (var i = 0; i < nodes.length; i++) {
-    var node = nodes[i];
-    var coordinates = node.geometry.coordinates;
-    var name = node.properties.id
-    var sensors = node.properties.sensors
-    console.log(name)
-    console.log(sensors)
-    console.log(coordinates)
-
+    var json_data = data.data;
+    for (var i = 0; i < json_data.length; i++) {
+    var node = json_data[i];
+    var each = {name:node.properties.id, coordinates:node.geometry.coordinates, sensors:node.properties.sensors};
+    nodes.push(each);
 }
-
-
-
   }
 });
 
