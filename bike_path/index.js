@@ -32,29 +32,15 @@ $.ajax({
   }
 });
 
+// add nodes as markers to map. Flip coordinates for leaflet marker object
+for (var i = 0; i < nodes.length; i++) {
+var node = nodes[i];
+var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
+marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 
+}
 
-
-
-
-
-// var node_query = $.get("http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/", function(data, status) {
-//   return data;
-//         });
-//
-
-
-
-
-
-
-
-
-
-
-
-var marker = L.marker([41.881832, -87.623177]).addTo(map);
-
+// create node objects
 var center1 = {
   "type": "Feature",
   "properties": {
@@ -73,6 +59,7 @@ var units = 'meters';
 var userRadius = 500;
 var sensor1 = turf.circle(center1, userRadius, steps, units);
 
+// Create slider to allow users to dynamically adjust buffer of node
 $( function() {
   $( "#slider" ).slider({
     orientation: "vertical",
@@ -90,11 +77,7 @@ $( function() {
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
 } );
 
-
-
-
-marker.bindPopup("<b>Sensor 1!</b><br> Place Holder for Sensor Data.")
-
+// add draw interface for route
 var drawnItems = new L.FeatureGroup();
      map.addLayer(drawnItems);
      var drawControl = new L.Control.Draw({
@@ -116,6 +99,8 @@ var drawnItems = new L.FeatureGroup();
      });
      map.addControl(drawControl);
 
+
+
      var route = map.on('draw:created', function (e) {
          var type = e.layerType,
              route = e.layer;
@@ -124,5 +109,11 @@ var drawnItems = new L.FeatureGroup();
          var leaflet_route = L.geoJson(small_polygon_route)
          drawnItems.addLayer(leaflet_route)
          var intersection = turf.intersect(small_polygon_route, sensor1);
-         return(intersection);
+         if (intersection == null){
+           console.log("No Intersection")
+         }
+         else{
+           console.log("Intersection")
+         }
+         return(false);
      });
