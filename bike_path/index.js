@@ -104,7 +104,6 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
       if (drawnItems.getLayers().length > 0){
         drawnItems.clearLayers();
 
-
         };
 
       var type = e.layerType,
@@ -113,12 +112,19 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
       var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
       var leaflet_route = L.geoJson(small_polygon_route);;
       drawnItems.addLayer(leaflet_route);
+      $('#calculate').removeAttr("disabled");
+      $('#deleteRoute').removeAttr("disabled");
+
+
 
 });
 
-document.getElementById("newRoute").onclick = function () {
-
+document.getElementById("deleteRoute").onclick = function () {
   drawnItems.clearLayers();
+  $('#calculate').attr("disabled","disabled");
+  $('#deleteRoute').attr("disabled","disabled");
+
+
  };
 // map.on("draw:deleted", function (e) {
 //     drawControl.setDrawingOptions({
