@@ -100,7 +100,7 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
      });
      map.addControl(drawControl);
 
-    map.on("draw:created", function (e) {
+    var route_geojson = map.on("draw:created", function (e) {
       if (drawnItems.getLayers().length > 0){
         drawnItems.clearLayers();
 
@@ -108,12 +108,23 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
 
       var type = e.layerType,
          route = e.layer;
+
+      drawnItems.addLayer(route);
       var route_geojson = route.toGeoJSON();
-      var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
-      var leaflet_route = L.geoJson(small_polygon_route);;
-      drawnItems.addLayer(leaflet_route);
+      // var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
+      // var leaflet_route = L.geoJson(small_polygon_route);
+      // drawnItems.addLayer(route_geojson);
+      // var intersection = turf.intersect(small_polygon_route, sensor1);
+      //         if (intersection == null){
+      //           console.log("No Intersection")
+      //         }
+      //         else{
+      //           console.log("Intersection")
+      //         }
+      //         return(false);
       $('#calculate').removeAttr("disabled");
       $('#deleteRoute').removeAttr("disabled");
+      return route_geojson;
 
 
 
@@ -123,17 +134,20 @@ document.getElementById("deleteRoute").onclick = function () {
   drawnItems.clearLayers();
   $('#calculate').attr("disabled","disabled");
   $('#deleteRoute').attr("disabled","disabled");
-
-
  };
-// map.on("draw:deleted", function (e) {
-//     drawControl.setDrawingOptions({
-//         polygon:true
-//     });
-//     map.removeControl(drawControl);
-//     map.addControl(drawControl);
-// });
 
+ document.getElementById("calculate").onclick = function () {
+   console.log(route);
+  //  console.log(small_polygon_route);
+  //           var intersection = turf.intersect(small_polygon_route, sensor1);
+  //           if (intersection == null){
+  //             console.log("No Intersection")
+  //           }
+  //           else{
+  //             console.log("Intersection")
+  //           }
+
+  };
 
 //
 //      var route = map.on('draw:created', function (e) {
