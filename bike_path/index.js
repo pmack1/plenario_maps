@@ -77,6 +77,7 @@ $( function() {
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
 } );
 
+
 // add draw interface for route
 var drawnItems = new L.FeatureGroup();
      map.addLayer(drawnItems);
@@ -99,21 +100,43 @@ var drawnItems = new L.FeatureGroup();
      });
      map.addControl(drawControl);
 
+    map.on("draw:created", function (e) {
+
+      var type = e.layerType,
+         route = e.layer;
+      var route_geojson = route.toGeoJSON()
+      var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
+      var leaflet_route = L.geoJson(small_polygon_route)
+      drawnItems.addLayer(leaflet_route)
+      // drawnItems.removeLayer(leaflet_route)
+
+});
+
+document.getElementById("newRoute").onclick = function () {
+  drawnItems.removeLayer(); };
+// map.on("draw:deleted", function (e) {
+//     drawControl.setDrawingOptions({
+//         polygon:true
+//     });
+//     map.removeControl(drawControl);
+//     map.addControl(drawControl);
+// });
 
 
-     var route = map.on('draw:created', function (e) {
-         var type = e.layerType,
-             route = e.layer;
-         var route_geojson = route.toGeoJSON()
-         var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
-         var leaflet_route = L.geoJson(small_polygon_route)
-         drawnItems.addLayer(leaflet_route)
-         var intersection = turf.intersect(small_polygon_route, sensor1);
-         if (intersection == null){
-           console.log("No Intersection")
-         }
-         else{
-           console.log("Intersection")
-         }
-         return(false);
-     });
+//
+//      var route = map.on('draw:created', function (e) {
+//          var type = e.layerType,
+//              route = e.layer;
+//          var route_geojson = route.toGeoJSON()
+//          var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
+//          var leaflet_route = L.geoJson(small_polygon_route)
+//          drawnItems.addLayer(leaflet_route)
+//          var intersection = turf.intersect(small_polygon_route, sensor1);
+//          if (intersection == null){
+//            console.log("No Intersection")
+//          }
+//          else{
+//            console.log("Intersection")
+//          }
+//          return(false);
+//      });

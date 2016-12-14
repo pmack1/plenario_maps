@@ -1,7 +1,10 @@
-<html>
+<html lang = "en">
 <head>
   <title>Array of Thing Node Locations</title>
-
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.3/leaflet.draw.css"/>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -12,22 +15,38 @@
   <script src="https://npmcdn.com/@turf/turf@3.5.1/turf.min.js"></script>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <style>
     #map{ height: 100% }
   </style>
 </head>
 <body>
+  <div class = "container-fluid">
+    <div class = "row">
+      <div class = "col-sm-9">
+        <div id="map"></div>
+      </div>
+      <div class = "col-sm-1">
+        <p>
+          <label for="amount">Distance In Meters:</label>
+          <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        </p>
+      <div id="slider" style="height:100px;"></div>
+      <!-- <div class = "col-sm-1">
+        <input id="Route" type="button" value="Calculate Route" />
+      </div> -->
+      </div>
+      <div class = "row">
+        <div class = "col-sm-2">
+          <input class = "btn btn-primary" type = "submit" value = "New Route"/ disabled="disabled">
+          <!-- <input id="newRoute" type = "button" value= "New Route" /> -->
+        </div>
+        <div class = "col-sm-2">
+          <input class = "btn btn-success" type = "submit" value = "Calculate Route" disabled="disabled"/>
+          <!-- <input id="Route" type="button" value="Calculate Route" /> -->
+        </div>
 
-  <div id="map"></div>
-
-  <p>
-    <label for="amount">Distance In Meters:</label>
-    <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
-  </p>
-
-<div id="slider" style="height:100px;"></div>
-
+      </div>
 
   <script src="index.js">
   </script>
