@@ -40,7 +40,11 @@ marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 
 }
 
-// create node objects
+
+
+// turf node constructor
+
+
 var center1 = {
   "type": "Feature",
   "properties": {
