@@ -79,7 +79,10 @@ $( function() {
 
 
 // add draw interface for route
-var drawnItems = new L.FeatureGroup();
+// var drawnItems = new L.FeatureGroup();
+var drawnItems = new L.LayerGroup();
+L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
+
      map.addLayer(drawnItems);
      var drawControl = new L.Control.Draw({
          position: 'topright',
@@ -94,26 +97,29 @@ var drawnItems = new L.FeatureGroup();
            },
           },
          },
-         edit: {
-             featureGroup: drawnItems
-         }
      });
      map.addControl(drawControl);
 
     map.on("draw:created", function (e) {
+      if (drawnItems.getLayers().length > 0){
+        drawnItems.clearLayers();
+
+
+        };
 
       var type = e.layerType,
          route = e.layer;
-      var route_geojson = route.toGeoJSON()
+      var route_geojson = route.toGeoJSON();
       var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
-      var leaflet_route = L.geoJson(small_polygon_route)
-      drawnItems.addLayer(leaflet_route)
-      // drawnItems.removeLayer(leaflet_route)
+      var leaflet_route = L.geoJson(small_polygon_route);;
+      drawnItems.addLayer(leaflet_route);
 
 });
 
 document.getElementById("newRoute").onclick = function () {
-  drawnItems.removeLayer(); };
+
+  drawnItems.clearLayers();
+ };
 // map.on("draw:deleted", function (e) {
 //     drawControl.setDrawingOptions({
 //         polygon:true
