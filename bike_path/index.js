@@ -2,6 +2,8 @@
 
 var mapboxAccessToken = 'pk.eyJ1IjoicG1hY2siLCJhIjoiY2l0cTJkN3N3MDA4ZTJvbnhoeG12MDM5ZyJ9.ISJHx3VHMvhQade2UQAIZg';
 var map = L.map('map').setView([41.8781, -87.6298], 14);
+var userRadius = 500;
+
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
@@ -39,10 +41,6 @@ var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
 marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 
 }
-
-
-
-// turf node constructor
 
 
 var center1 = {
@@ -128,12 +126,38 @@ document.getElementById("deleteRoute").onclick = function () {
 
  document.getElementById("calculate").onclick = function () {
    var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
-   var intersection = turf.intersect(small_polygon_route, sensor1);
-  if (intersection == null){
-    console.log("No Intersection")
-  }
-  else{
-    console.log("Intersection")
-  }
+   for (var i = 0; i < nodes.length; i++) {
+     var node = nodes[i];
+     var coordinates = node.coordinates;
+     var node_center = {
+       "type": "Feature",
+       "properties": {
+         "marker-color": "#0f0"
+       },
+       "geometry": {
+         "type": "Point",
+         "coordinates": coordinates
+       }
+     };
 
+     var steps = 10;
+     var units = 'meters';
+
+     var node_circle = turf.circle(node_center, userRadius, steps, units);
+
+
+     var intersection = turf.intersect(small_polygon_route, node_circle);
+     if (intersection == null){
+       console.log(node.name)
+       console.log("no intersect")
+       node.intersect = false;
+     }
+     else{
+       console.log(node.name)
+       console.log("intersection")
+       node.intersects = true;
+     }
+
+
+};
 };
