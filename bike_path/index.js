@@ -9,16 +9,13 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
     id: 'mapbox.light',
 }).addTo(map);
 
-// load node information from plenario
-var nodes = new Array();
-
-function node(name,coordinates,sensors)
+function formatDate(date)
 {
-   this.name=name;
-   this.coordinates=coordinates;
-   this.sensors=sensors;
+  return date.getUTCFullYear().toString() + "-" + date.getUTCMonth().toString() + "-" + date.getUTCDate().toString() + "T" + date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString();
 };
 
+// load node information from plenario
+var nodes = new Array();
 $.ajax({
   type: 'GET',
   url: "http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/",
@@ -34,13 +31,42 @@ $.ajax({
   }
 });
 
+for (var i = 0; i <nodes.length; i++){
+  node = nodes[i];
+  for (var j = 0; j < node.sensors.length; j++){
+    sensor_string = node.sensors[j].toString()
+    if (!(i == 1 & j==1)) {
+
+    url_string = "http://plenar.io/v1/api/sensor-networks/plenario_development/sensors/" + sensor_string
+    $.ajax({
+      type: 'GET',
+      url: url_string,
+      async: false,
+      dataType: 'json',
+      success: function (data) {
+        var response = data.data;
+        for (k = 0; k < response.length; k++){
+          sensor = response[k];
+          featureProperties = sensor.properties;
+          nodes[i].featureProperties = featureProperties;
+        };
+      }
+    });
+  };
+
+  };
+
+};
+
+
+
 // add nodes as markers to map. Flip coordinates for leaflet marker object
 for (var i = 0; i < nodes.length; i++) {
 var node = nodes[i];
 var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
 marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 
-}
+};
 
 
 // Create slider to allow users to dynamically adjust buffer of node
@@ -147,28 +173,28 @@ document.getElementById("deleteRoute").onclick = function () {
   var diff = -10;
   var start = new Date(end.getTime() + diff*60000);
 
-  var start_string = start.getUTCFullYear().toString() + "-" + start.getUTCMonth().toString() + "-" + start.getUTCDate().toString() + "T" + start.getUTCHours().toString() + ":" + start.getUTCMinutes().toString();
-  var end_string = end.getUTCFullYear().toString() + "-" + end.getUTCMonth().toString() + "-" + end.getUTCDate().toString() + "T" + end.getUTCHours().toString() + ":" + end.getUTCMinutes().toString();
-  for (var i = 0; i < nodes.length; i++) {
-    var node_name_string = nodes[i].name.toString()
-    console.log(node_name_string)
-
-
-  var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=temperature&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
-  $.ajax({
-    type: 'GET',
-    url: request_url,
-    async: false,
-    dataType: 'json',
-    success: function (data) {
-      var response = data.data;
-      var i = response.length - 1
-      var last = response[i]
-      var temp = last['results'].temperature
-
-    }
-  });
-  };
+  var start_string = formatDate(start);
+  var end_string = formatDate(end);
+  // for (var i = 0; i < nodes.length; i++) {
+  //   var node_name_string = nodes[i].name.toString()
+  //   console.log(node_name_string)
+  //
+  //
+  // var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=temperature&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
+  // $.ajax({
+  //   type: 'GET',
+  //   url: request_url,
+  //   async: false,
+  //   dataType: 'json',
+  //   success: function (data) {
+  //     var response = data.data;
+  //     var i = response.length - 1
+  //     var last = response[i]
+  //     var temp = last['results'].temperature
+  //
+  //   }
+  // });
+  // };
 
 
 };
