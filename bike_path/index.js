@@ -1,7 +1,7 @@
 
-
 var mapboxAccessToken = 'pk.eyJ1IjoicG1hY2siLCJhIjoiY2l0cTJkN3N3MDA4ZTJvbnhoeG12MDM5ZyJ9.ISJHx3VHMvhQade2UQAIZg';
 var map = L.map('map').setView([41.8781, -87.6298], 14);
+// default radius is 500 meters
 var userRadius = 500;
 
 
@@ -43,24 +43,6 @@ marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 }
 
 
-var center1 = {
-  "type": "Feature",
-  "properties": {
-    "marker-color": "#0f0"
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [-87.623177, 41.881832]
-  }
-};
-
-var steps = 10;
-var units = 'meters';
-
-
-var userRadius = 500;
-var sensor1 = turf.circle(center1, userRadius, steps, units);
-
 // Create slider to allow users to dynamically adjust buffer of node
 $( function() {
   $( "#slider" ).slider({
@@ -81,7 +63,6 @@ $( function() {
 
 
 // add draw interface for route
-// var drawnItems = new L.FeatureGroup();
 var drawnItems = new L.LayerGroup();
 L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
 
@@ -125,7 +106,7 @@ document.getElementById("deleteRoute").onclick = function () {
  };
 
  document.getElementById("calculate").onclick = function () {
-   var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers')
+   var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
    for (var i = 0; i < nodes.length; i++) {
      var node = nodes[i];
      var coordinates = node.coordinates;
@@ -148,16 +129,46 @@ document.getElementById("deleteRoute").onclick = function () {
 
      var intersection = turf.intersect(small_polygon_route, node_circle);
      if (intersection == null){
-       console.log(node.name)
-       console.log("no intersect")
+      //  console.log(node.name)
+      //  console.log("no intersect")
        node.intersect = false;
      }
      else{
-       console.log(node.name)
-       console.log("intersection")
+      //  console.log(node.name)
+      //  console.log("intersection")
        node.intersects = true;
      }
 
 
-};
+  };
+
+  var end = new Date()
+  // take date as of 10 minutes ago for start date query
+  var diff = -10;
+  var start = new Date(end.getTime() + diff*60000);
+
+  var start_string = start.getUTCFullYear().toString() + "-" + start.getUTCMonth().toString() + "-" + start.getUTCDate().toString() + "T" + start.getUTCHours().toString() + ":" + start.getUTCMinutes().toString();
+  var end_string = end.getUTCFullYear().toString() + "-" + end.getUTCMonth().toString() + "-" + end.getUTCDate().toString() + "T" + end.getUTCHours().toString() + ":" + end.getUTCMinutes().toString();
+  for (var i = 0; i < nodes.length; i++) {
+    var node_name_string = nodes[i].name.toString()
+    console.log(node_name_string)
+
+
+  var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=temperature&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
+  $.ajax({
+    type: 'GET',
+    url: request_url,
+    async: false,
+    dataType: 'json',
+    success: function (data) {
+      var response = data.data;
+      var i = response.length - 1
+      var last = response[i]
+      var temp = last['results'].temperature
+
+    }
+  });
+  };
+
+
 };
