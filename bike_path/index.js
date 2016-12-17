@@ -161,6 +161,11 @@ document.getElementById("deleteRoute").onclick = function () {
  };
 
  document.getElementById("calculate").onclick = function () {
+    var results = document.getElementById("results");
+    results.innerHTML = '';
+
+
+
    var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
    for (var i = 0; i < nodes.length; i++) {
      var node = nodes[i];
@@ -186,7 +191,7 @@ document.getElementById("deleteRoute").onclick = function () {
      if (intersection == null){
       //  console.log(node.name)
       //  console.log("no intersect")
-       node.intersect = false;
+       node.intersects = false;
      }
      else{
       //  console.log(node.name)
@@ -204,8 +209,12 @@ document.getElementById("deleteRoute").onclick = function () {
 
   var start_string = formatDate(start);
   var end_string = formatDate(end);
+  var intersect_count = 0;
   for (var i = 0; i < nodes.length; i++) {
     var node = nodes[i]
+    if (node.intersects == true){
+      intersect_count++;
+
     var node_name_string = nodes[i].name.toString()
     for (var j = 0; j < nodes[i].featureProperties.length; j++){
       var featureProperties_string = nodes[i].featureProperties[j].toString()
@@ -228,35 +237,14 @@ document.getElementById("deleteRoute").onclick = function () {
           console.log(reading)
           addToTable(node_name_string, property_string, reading);
 
-
-
-
         }
       });
     };
   };
 
-  // add to table test
-  // var table = document.getElementById("results")
-  // var myNewRow = document.createElement("tr")
-  // var myNewCol1 = document.createElement("td")
-  // var myNewCol2 = document.createElement("td")
-  // var myNewCol3 = document.createElement("td")
-  // var newText1 = document.createTextNode("node_dev_1")
-  // var newText2 = document.createTextNode("temperature")
-  // var newText3 = document.createTextNode("32 F")
-  //
-  // table.appendChild(myNewRow);
-  // myNewRow.appendChild(myNewCol1);
-  // myNewRow.appendChild(myNewCol2);
-  // myNewRow.appendChild(myNewCol3);
-  // myNewCol1.appendChild(newText1);
-  // myNewCol2.appendChild(newText2);
-  // myNewCol3.appendChild(newText3);
-
-
-
-
-
+  };
+  if (intersect_count == 0){
+    alert("Your Route did not come within the distance threshold of any nodes. Try increasing the distance threshold or entering a new route.")
+  }
 
 };
