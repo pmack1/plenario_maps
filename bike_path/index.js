@@ -65,7 +65,6 @@ for (var i = 0; i <nodes.length; i++){
   node = nodes[i];
   for (var j = 0; j < node.sensors.length; j++){
     sensor_string = node.sensors[j].toString()
-    if (!(i == 1 & j==1)) {
 
     url_string = "http://plenar.io/v1/api/sensor-networks/plenario_development/sensors/" + sensor_string
     $.ajax({
@@ -82,7 +81,6 @@ for (var i = 0; i <nodes.length; i++){
         };
       }
     });
-  };
 
   };
 
@@ -93,10 +91,7 @@ for (var i = 0; i <nodes.length; i++){
 //add nodes as markers to map. Flip coordinates for leaflet marker object
 for (var i = 0; i < nodes.length; i++) {
 var node = nodes[i];
-// var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
-// marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 makeMarker(node);
-
 };
 
 
