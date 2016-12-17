@@ -14,6 +14,36 @@ function formatDate(date)
   return date.getUTCFullYear().toString() + "-" + date.getUTCMonth().toString() + "-" + date.getUTCDate().toString() + "T" + date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString();
 };
 
+function makeMarker(node)
+{
+  var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
+  marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
+};
+
+function addToTable(node_name, property_name, reading)
+{
+  // add to table test
+
+  var table = document.getElementById("results")
+  var NewRow = document.createElement("tr")
+  var NewCol1 = document.createElement("td")
+  var NewCol2 = document.createElement("td")
+  var NewCol3 = document.createElement("td")
+  var Text1 = document.createTextNode(node_name)
+  var Text2 = document.createTextNode(property_name)
+  var Text3 = document.createTextNode(reading)
+
+  table.appendChild(NewRow);
+  NewRow.appendChild(NewCol1);
+  NewRow.appendChild(NewCol2);
+  NewRow.appendChild(NewCol3);
+  NewCol1.appendChild(Text1);
+  NewCol2.appendChild(Text2);
+  NewCol3.appendChild(Text3);
+};
+
+
+
 // load node information from plenario
 var nodes = new Array();
 $.ajax({
@@ -60,11 +90,12 @@ for (var i = 0; i <nodes.length; i++){
 
 
 
-// add nodes as markers to map. Flip coordinates for leaflet marker object
+//add nodes as markers to map. Flip coordinates for leaflet marker object
 for (var i = 0; i < nodes.length; i++) {
 var node = nodes[i];
-var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
-marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
+// var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
+// marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
+makeMarker(node);
 
 };
 
@@ -80,10 +111,8 @@ $( function() {
     slide: function( event, ui ) {
       $( "#amount" ).val( ui.value );
       userRadius = Number($( "#amount" ).val());
-      sensor1 = turf.circle(center1, userRadius, steps, units);
     }
   });
-
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
 } );
 
@@ -175,26 +204,59 @@ document.getElementById("deleteRoute").onclick = function () {
 
   var start_string = formatDate(start);
   var end_string = formatDate(end);
-  // for (var i = 0; i < nodes.length; i++) {
-  //   var node_name_string = nodes[i].name.toString()
-  //   console.log(node_name_string)
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i]
+    var node_name_string = nodes[i].name.toString()
+    for (var j = 0; j < nodes[i].featureProperties.length; j++){
+      var featureProperties_string = nodes[i].featureProperties[j].toString()
+      var feature_string = featureProperties_string.split(".")[0];
+      var property_string = featureProperties_string.split(".")[1];
+      var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
+
+      $.ajax({
+        type: 'GET',
+        url: request_url,
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+          var response = data.data;
+          var i = response.length - 1
+          var last = response[i]
+          var reading = last['results'][property_string]
+          console.log(node_name_string)
+          console.log(property_string)
+          console.log(reading)
+          addToTable(node_name_string, property_string, reading);
+
+
+
+
+        }
+      });
+    };
+  };
+
+  // add to table test
+  // var table = document.getElementById("results")
+  // var myNewRow = document.createElement("tr")
+  // var myNewCol1 = document.createElement("td")
+  // var myNewCol2 = document.createElement("td")
+  // var myNewCol3 = document.createElement("td")
+  // var newText1 = document.createTextNode("node_dev_1")
+  // var newText2 = document.createTextNode("temperature")
+  // var newText3 = document.createTextNode("32 F")
   //
-  //
-  // var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=temperature&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
-  // $.ajax({
-  //   type: 'GET',
-  //   url: request_url,
-  //   async: false,
-  //   dataType: 'json',
-  //   success: function (data) {
-  //     var response = data.data;
-  //     var i = response.length - 1
-  //     var last = response[i]
-  //     var temp = last['results'].temperature
-  //
-  //   }
-  // });
-  // };
+  // table.appendChild(myNewRow);
+  // myNewRow.appendChild(myNewCol1);
+  // myNewRow.appendChild(myNewCol2);
+  // myNewRow.appendChild(myNewCol3);
+  // myNewCol1.appendChild(newText1);
+  // myNewCol2.appendChild(newText2);
+  // myNewCol3.appendChild(newText3);
+
+
+
+
 
 
 };

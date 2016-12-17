@@ -23,7 +23,7 @@
 <body>
   <div class = "container-fluid">
     <div class = "row">
-      <div class = "col-sm-9">
+      <div class = "col-sm-7">
         <div id="map"></div>
       </div>
       <div class = "col-sm-1">
@@ -32,16 +32,49 @@
           <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
       <div id="slider" style="height:100px;"></div>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <input id = "calculate" class = "btn btn-success" type = "submit" value = "Calculate Route" disabled="disabled"/>
+      <br/>
+      <br/>
+      <input id = "deleteRoute" class = "btn btn-danger" type = "submit" value = "Delete Route" disabled = "disabled"/>
       </div>
-      <div class = "row">
+      <div class = "col-sm-4">
+        <table class = "table table-hover">
+          <thead>
+            <tr>
+              <th> Node </th>
+              <th> Feature </th>
+              <th> Value </th>
+            </tr>
+          </thead>
+          <tbody id = "results">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- <div class = "row">
+
         <div class = "col-sm-2">
           <input id = "calculate" class = "btn btn-success" type = "submit" value = "Calculate Route" disabled="disabled"/>
         </div>
         <div class = "col-sm-2">
           <input id = "deleteRoute" class = "btn btn-danger" type = "submit" value = "Delete Route" disabled = "disabled"/>
-        </div>
 
-      </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
 
   <script src="index.js">
   </script>
