@@ -112,6 +112,11 @@ $( function() {
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
 } );
 
+// create date field
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
+
 
 // add draw interface for route
 var drawnItems = new L.LayerGroup();

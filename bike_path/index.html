@@ -16,6 +16,9 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="  https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js"></script>
+
   <style>
     #map{ height: 100% }
   </style>
@@ -23,10 +26,10 @@
 <body>
   <div class = "container-fluid">
     <div class = "row">
-      <div class = "col-sm-7">
+      <div class = "col-sm-6">
         <div id="map"></div>
       </div>
-      <div class = "col-sm-1">
+      <div class = "col-sm-2">
         <p>
           <label for="amount">Distance In Meters:</label>
           <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
@@ -34,13 +37,27 @@
       <div id="slider" style="height:100px;"></div>
       <br/>
       <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
+      <div class="form-group">
+         <label for="datetimepicker1">Display Results As Of:</label>
+          <div class='input-group date' id='datetimepicker1'>
+              <input type='text' class="form-control" />
+              <span class="input-group-addon">
+                  <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+          </div>
+          <br/>
+          <br/>
+          <div class=".checkbox-inline" id = "feautureCheckbox1">
+            <label><input type="checkbox" value="">Temperature</label>
+          </div>
+          <div class=".checkbox-inline">
+            <label><input type="checkbox" value="">Carbon Dioxide</label>
+          </div>
+          <div class=".checkbox-inline">
+            <label><input type="checkbox" value="">Nitrogen</label>
+          </div>
+
+      </div>
       <br/>
       <br/>
       <input id = "calculate" class = "btn btn-success" type = "submit" value = "Calculate Route" disabled="disabled"/>
@@ -48,7 +65,32 @@
       <br/>
       <input id = "deleteRoute" class = "btn btn-danger" type = "submit" value = "Delete Route" disabled = "disabled"/>
       </div>
+
+
       <div class = "col-sm-4">
+        <!-- <div class="form-group">
+           <label for="datetimepicker1">Display Results As Of:</label>
+            <div class='input-group date' id='datetimepicker1'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <div class=".checkbox-inline" id = "feautureCheckbox1">
+              <label><input type="checkbox" value="">Temperature</label>
+            </div>
+            <div class=".checkbox-inline">
+              <label><input type="checkbox" value="">Carbon Dioxide</label>
+            </div>
+            <div class=".checkbox-inline">
+              <label><input type="checkbox" value="">Nitrogen</label>
+            </div>
+
+        </div> -->
+        <!-- <br/>
+        <br/>
+        <br/>
+        <br/> -->
         <table class = "table table-hover">
           <thead>
             <tr>
@@ -62,16 +104,6 @@
         </table>
       </div>
 
-      <!-- <div class = "row">
-
-        <div class = "col-sm-2">
-          <input id = "calculate" class = "btn btn-success" type = "submit" value = "Calculate Route" disabled="disabled"/>
-        </div>
-        <div class = "col-sm-2">
-          <input id = "deleteRoute" class = "btn btn-danger" type = "submit" value = "Delete Route" disabled = "disabled"/>
-
-        </div>
-      </div> -->
     </div>
   </div>
 
