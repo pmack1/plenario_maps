@@ -2,7 +2,7 @@
 var mapboxAccessToken = 'pk.eyJ1IjoicG1hY2siLCJhIjoiY2l0cTJkN3N3MDA4ZTJvbnhoeG12MDM5ZyJ9.ISJHx3VHMvhQade2UQAIZg';
 var map = L.map('map').setView([41.8781, -87.6298], 14);
 // default radius is 500 meters
-var userRadius = 500;
+var userRadius = 1000000;
 
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
@@ -11,7 +11,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
 
 function formatDate(date)
 {
-  return date.getUTCFullYear().toString() + "-" + date.getUTCMonth().toString() + "-" + date.getUTCDate().toString() + "T" + date.getUTCHours().toString() + ":" + date.getUTCMinutes().toString();
+  return date.toISOString().slice(0,-1);
 };
 
 function makeMarker(node)
@@ -65,6 +65,7 @@ for (var i = 0; i <nodes.length; i++){
   node = nodes[i];
   for (var j = 0; j < node.sensors.length; j++){
     sensor_string = node.sensors[j].toString()
+    if (!(i == 1 & j==1)) {
 
     url_string = "http://plenar.io/v1/api/sensor-networks/plenario_development/sensors/" + sensor_string
     $.ajax({
@@ -81,6 +82,7 @@ for (var i = 0; i <nodes.length; i++){
         };
       }
     });
+  };
 
   };
 
@@ -184,13 +186,9 @@ document.getElementById("deleteRoute").onclick = function () {
 
      var intersection = turf.intersect(small_polygon_route, node_circle);
      if (intersection == null){
-      //  console.log(node.name)
-      //  console.log("no intersect")
        node.intersects = false;
      }
      else{
-      //  console.log(node.name)
-      //  console.log("intersection")
        node.intersects = true;
      }
 
@@ -199,7 +197,7 @@ document.getElementById("deleteRoute").onclick = function () {
 
   var end = new Date()
   // take date as of 10 minutes ago for start date query
-  var diff = -10;
+  var diff = -7000;
   var start = new Date(end.getTime() + diff*60000);
 
   var start_string = formatDate(start);
@@ -215,8 +213,8 @@ document.getElementById("deleteRoute").onclick = function () {
       var featureProperties_string = nodes[i].featureProperties[j].toString()
       var feature_string = featureProperties_string.split(".")[0];
       var property_string = featureProperties_string.split(".")[1];
-      var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=3&start_datetime=" + start_string + "&end_datetime=" + end_string;
-
+      var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=10000&start_datetime=" + start_string + "&end_datetime=" + end_string;
+      console.log(request_url);
       $.ajax({
         type: 'GET',
         url: request_url,
@@ -226,10 +224,8 @@ document.getElementById("deleteRoute").onclick = function () {
           var response = data.data;
           var i = response.length - 1
           var last = response[i]
+          console.log(last)
           var reading = last['results'][property_string]
-          console.log(node_name_string)
-          console.log(property_string)
-          console.log(reading)
           addToTable(node_name_string, property_string, reading);
 
         }
