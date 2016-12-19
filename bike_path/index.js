@@ -5,18 +5,18 @@ var map = L.map('map').setView([41.8781, -87.6298], 14);
 var userRadius = 500;
 
 // iniitialze user features and update if checkbox status changes
-var userFeatures = ['temperature', 'carbon', 'nitrogen'];
+var userFeatures = ['temperature.temperature', 'gas_concentration.co2', 'gas_concentration.n2'];
 $('input[type=checkbox]').change(
     function(){
       userFeatures = new Array();
       if($("#featureTemp").is(':checked')){
-        userFeatures.push('temperature');
+        userFeatures.push('temperature.temperature');
       }
       if($("#featureCarbon").is(':checked')){
-        userFeatures.push('carbon');
+        userFeatures.push('gas_concentration.co2');
       }
       if($("#featureNitrogen").is(':checked')){
-        userFeatures.push('nitrogen');
+        userFeatures.push('gas_concentration.n2');
       }
     });
 
@@ -41,7 +41,6 @@ $("#datetimepicker1").on("dp.change", function(e) {
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
 }).addTo(map);
-
 
 function formatDate(date)
 {
@@ -241,7 +240,7 @@ document.getElementById("deleteRoute").onclick = function () {
   };
 
   var end = userTime;
-  // take date as of 10 minutes ago for start date query
+  // take date as of 60 minutes ago for start date query
   var diff = -60;
   var start = new Date(end.getTime() + diff*60000);
 
@@ -254,12 +253,15 @@ document.getElementById("deleteRoute").onclick = function () {
       intersect_count++;
 
     var node_name_string = nodes[i].name.toString()
-    for (var j = 0; j < nodes[i].featureProperties.length; j++){
-      var featureProperties_string = nodes[i].featureProperties[j].toString()
+    for (var j = 0; j < userFeatures.length; j++){
+      var featureProperties_string = userFeatures[j];
+      console.log(featureProperties_string);
+      if (nodes[i].featureProperties.includes(featureProperties_string)){
+
+
       var feature_string = featureProperties_string.split(".")[0];
       var property_string = featureProperties_string.split(".")[1];
       var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=100&start_datetime=" + start_string + "&end_datetime=" + end_string;
-      console.log(request_url);
       $.ajax({
         type: 'GET',
         url: request_url,
@@ -269,12 +271,13 @@ document.getElementById("deleteRoute").onclick = function () {
           var response = data.data;
           var i = response.length - 1
           var last = response[i]
-          // console.log(last)
           var reading = last['results'][property_string]
           addToTable(node_name_string, property_string, reading);
 
         }
       });
+    };
+
     };
   };
 
