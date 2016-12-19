@@ -20,6 +20,27 @@ $('input[type=checkbox]').change(
       }
     });
 
+// initialize time
+var userTime = $(function () {
+      var dateNow = new Date();
+        $('#datetimepicker1').datetimepicker({
+          defaultDate:dateNow
+        }
+        );
+    });
+
+$("#datetimepicker1").on("dp.change", function(e) {
+  userTime = $("#datetimepicker1").find("input").val();
+
+      });
+
+// $('#datetimepicker1').on('input', function() {
+//   alert('text changed');
+//   userTime = $("#datetimepicker1").find("input").val();
+// });
+//
+// $("#datetimepicker1").find("input").val();
+
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
 }).addTo(map);
@@ -128,10 +149,6 @@ $( function() {
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
 } );
 
-// create date field
-    $(function () {
-        $('#datetimepicker1').datetimepicker();
-    });
 
 
 // add draw interface for route
@@ -169,8 +186,8 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
       route_geojson = route.toGeoJSON();
 
       //enable calculate if there is a route drawn and features and time are selected
-
       $('#calculate').removeAttr("disabled");
+
 
 
       $('#deleteRoute').removeAttr("disabled");
@@ -183,6 +200,10 @@ document.getElementById("deleteRoute").onclick = function () {
  };
 
  document.getElementById("calculate").onclick = function () {
+   if (userFeatures.length == 0){
+     alert("At Least One Feature Must Selected")
+   }
+   else{
 
     var results = document.getElementById("results");
     results.innerHTML = '';
@@ -263,5 +284,6 @@ document.getElementById("deleteRoute").onclick = function () {
   if (intersect_count == 0){
     alert("Your Route did not come within the distance threshold of any nodes. Try increasing the distance threshold or entering a new route.")
   }
+};
 
 };
