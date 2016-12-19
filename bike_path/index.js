@@ -4,6 +4,22 @@ var map = L.map('map').setView([41.8781, -87.6298], 14);
 // default radius is 500 meters
 var userRadius = 500;
 
+// iniitialze user features and update if checkbox status changes
+var userFeatures = ['temperature', 'carbon', 'nitrogen'];
+$('input[type=checkbox]').change(
+    function(){
+      userFeatures = new Array();
+      if($("#featureTemp").is(':checked')){
+        userFeatures.push('temperature');
+      }
+      if($("#featureCarbon").is(':checked')){
+        userFeatures.push('carbon');
+      }
+      if($("#featureNitrogen").is(':checked')){
+        userFeatures.push('nitrogen');
+      }
+    });
+
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
 }).addTo(map);
@@ -151,7 +167,12 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
 
       drawnItems.addLayer(route);
       route_geojson = route.toGeoJSON();
+
+      //enable calculate if there is a route drawn and features and time are selected
+
       $('#calculate').removeAttr("disabled");
+
+
       $('#deleteRoute').removeAttr("disabled");
 });
 
@@ -162,6 +183,7 @@ document.getElementById("deleteRoute").onclick = function () {
  };
 
  document.getElementById("calculate").onclick = function () {
+
     var results = document.getElementById("results");
     results.innerHTML = '';
 
@@ -218,7 +240,7 @@ document.getElementById("deleteRoute").onclick = function () {
       var feature_string = featureProperties_string.split(".")[0];
       var property_string = featureProperties_string.split(".")[1];
       var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=10000&start_datetime=" + start_string + "&end_datetime=" + end_string;
-      console.log(request_url);
+      // console.log(request_url);
       $.ajax({
         type: 'GET',
         url: request_url,
@@ -228,7 +250,7 @@ document.getElementById("deleteRoute").onclick = function () {
           var response = data.data;
           var i = response.length - 1
           var last = response[i]
-          console.log(last)
+          // console.log(last)
           var reading = last['results'][property_string]
           addToTable(node_name_string, property_string, reading);
 
