@@ -255,12 +255,10 @@ document.getElementById("deleteRoute").onclick = function () {
     var node_name_string = nodes[i].name.toString()
     for (var j = 0; j < userFeatures.length; j++){
       var featureProperties_string = userFeatures[j];
-      console.log(featureProperties_string);
-      if (nodes[i].featureProperties.includes(featureProperties_string)){
-
-
       var feature_string = featureProperties_string.split(".")[0];
       var property_string = featureProperties_string.split(".")[1];
+      console.log(featureProperties_string);
+      if (nodes[i].featureProperties.includes(featureProperties_string)){
       var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=100&start_datetime=" + start_string + "&end_datetime=" + end_string;
       $.ajax({
         type: 'GET',
@@ -276,6 +274,9 @@ document.getElementById("deleteRoute").onclick = function () {
 
         }
       });
+    }
+    else{
+      addToTable(node_name_string,property_string, "Not Measured At This Node" )
     };
 
     };
