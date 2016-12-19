@@ -20,8 +20,10 @@ $('input[type=checkbox]').change(
       }
     });
 
+
 // initialize time
-var userTime = $(function () {
+var userTime;
+ $(function () {
       var dateNow = new Date();
         $('#datetimepicker1').datetimepicker({
           defaultDate:dateNow
@@ -31,19 +33,15 @@ var userTime = $(function () {
 
 $("#datetimepicker1").on("dp.change", function(e) {
   userTime = $("#datetimepicker1").find("input").val();
+  userTime = new Date(userTime);
 
       });
 
-// $('#datetimepicker1').on('input', function() {
-//   alert('text changed');
-//   userTime = $("#datetimepicker1").find("input").val();
-// });
-//
-// $("#datetimepicker1").find("input").val();
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
 }).addTo(map);
+
 
 function formatDate(date)
 {
@@ -242,9 +240,9 @@ document.getElementById("deleteRoute").onclick = function () {
 
   };
 
-  var end = new Date()
+  var end = userTime;
   // take date as of 10 minutes ago for start date query
-  var diff = -7000;
+  var diff = -60;
   var start = new Date(end.getTime() + diff*60000);
 
   var start_string = formatDate(start);
@@ -260,8 +258,8 @@ document.getElementById("deleteRoute").onclick = function () {
       var featureProperties_string = nodes[i].featureProperties[j].toString()
       var feature_string = featureProperties_string.split(".")[0];
       var property_string = featureProperties_string.split(".")[1];
-      var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=10000&start_datetime=" + start_string + "&end_datetime=" + end_string;
-      // console.log(request_url);
+      var request_url =  "http://plenar.io/v1/api/sensor-networks/plenario_development/query?feature=" + feature_string + "&nodes=" + node_name_string + "&limit=100&start_datetime=" + start_string + "&end_datetime=" + end_string;
+      console.log(request_url);
       $.ajax({
         type: 'GET',
         url: request_url,
