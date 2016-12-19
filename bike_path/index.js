@@ -2,8 +2,7 @@
 var mapboxAccessToken = 'pk.eyJ1IjoicG1hY2siLCJhIjoiY2l0cTJkN3N3MDA4ZTJvbnhoeG12MDM5ZyJ9.ISJHx3VHMvhQade2UQAIZg';
 var map = L.map('map').setView([41.8781, -87.6298], 14);
 // default radius is 500 meters
-var userRadius = 1000000;
-
+var userRadius = 500;
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
     id: 'mapbox.light',
@@ -11,19 +10,20 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token='
 
 function formatDate(date)
 {
+  // format date into UTC format
   return date.toISOString().slice(0,-1);
 };
 
 function makeMarker(node)
 {
+  // add marker object to map
   var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
   marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
 };
 
 function addToTable(node_name, property_name, reading)
 {
-  // add to table test
-
+  // append results to table element
   var table = document.getElementById("results")
   var NewRow = document.createElement("tr")
   var NewCol1 = document.createElement("td")
@@ -42,53 +42,52 @@ function addToTable(node_name, property_name, reading)
   NewCol3.appendChild(Text3);
 };
 
-
-
 // load node information from plenario
 var nodes = new Array();
-$.ajax({
-  type: 'GET',
-  url: "http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/",
-  async: false,
-  dataType: 'json',
-  success: function (data) {
-    var json_data = data.data;
-    for (var i = 0; i < json_data.length; i++) {
-    var node = json_data[i];
-    var each = {name:node.properties.id, coordinates:node.geometry.coordinates, sensors:node.properties.sensors};
-    nodes.push(each);
-}
+function createNodes(){
+  $.ajax({
+    type: 'GET',
+    url: "http://plenar.io/v1/api/sensor-networks/plenario_development/nodes/",
+    async: false,
+    dataType: 'json',
+    success: function (data) {
+      var json_data = data.data;
+      for (var i = 0; i < json_data.length; i++) {
+      var node = json_data[i];
+      var each = {name:node.properties.id, coordinates:node.geometry.coordinates, sensors:node.properties.sensors};
+      nodes.push(each);
   }
-});
+    }
+  });
 
-for (var i = 0; i <nodes.length; i++){
-  node = nodes[i];
-  for (var j = 0; j < node.sensors.length; j++){
-    sensor_string = node.sensors[j].toString()
-    if (!(i == 1 & j==1)) {
+  for (var i = 0; i <nodes.length; i++){
+    node = nodes[i];
+    for (var j = 0; j < node.sensors.length; j++){
+      sensor_string = node.sensors[j].toString()
+      if (!(i == 1 & j==1)) {
 
-    url_string = "http://plenar.io/v1/api/sensor-networks/plenario_development/sensors/" + sensor_string
-    $.ajax({
-      type: 'GET',
-      url: url_string,
-      async: false,
-      dataType: 'json',
-      success: function (data) {
-        var response = data.data;
-        for (k = 0; k < response.length; k++){
-          sensor = response[k];
-          featureProperties = sensor.properties;
-          nodes[i].featureProperties = featureProperties;
-        };
-      }
-    });
+      url_string = "http://plenar.io/v1/api/sensor-networks/plenario_development/sensors/" + sensor_string
+      $.ajax({
+        type: 'GET',
+        url: url_string,
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+          var response = data.data;
+          for (k = 0; k < response.length; k++){
+            sensor = response[k];
+            featureProperties = sensor.properties;
+            nodes[i].featureProperties = featureProperties;
+          };
+        }
+      });
+    };
+    };
   };
-
-  };
-
 };
 
-
+// initialize nodes
+createNodes();
 
 //add nodes as markers to map. Flip coordinates for leaflet marker object
 for (var i = 0; i < nodes.length; i++) {
