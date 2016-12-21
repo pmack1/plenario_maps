@@ -98,6 +98,15 @@ function determineIntersect(nodes, route_geojson)
 
 function addToTable(node_name, property_name, reading)
 {
+  if (property_name == 'n2'){
+    display_name = 'Nitrogen Gas';
+  };
+  if (property_name == 'co2'){
+    display_name == 'Carbonn Dioxide Gas';
+  };
+  if (property_name == 'temperature'){
+    display_name = 'Temperature Farenheit';
+  };
   // append results to table element
   var table = document.getElementById("results")
   var NewRow = document.createElement("tr")
@@ -105,7 +114,7 @@ function addToTable(node_name, property_name, reading)
   var NewCol2 = document.createElement("td")
   var NewCol3 = document.createElement("td")
   var Text1 = document.createTextNode(node_name)
-  var Text2 = document.createTextNode(property_name)
+  var Text2 = document.createTextNode(display_name)
   var Text3 = document.createTextNode(reading)
 
   table.appendChild(NewRow);
@@ -226,20 +235,10 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
       route_geojson = route.toGeoJSON();
       determineIntersect(nodes, route_geojson);
 
-
-
       //enable calculate if there is a route drawn and features and time are selected
       $('#calculate').removeAttr("disabled");
 
-
-
       $('#deleteRoute').removeAttr("disabled");
-
-
-
-
-
-
 });
 
 document.getElementById("deleteRoute").onclick = function () {
@@ -257,38 +256,6 @@ document.getElementById("deleteRoute").onclick = function () {
     var results = document.getElementById("results");
     results.innerHTML = '';
 
-
-
-  //  var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
-  //  for (var i = 0; i < nodes.length; i++) {
-  //    var node = nodes[i];
-  //    var coordinates = node.coordinates;
-  //    var node_center = {
-  //      "type": "Feature",
-  //      "properties": {
-  //      },
-  //      "geometry": {
-  //        "type": "Point",
-  //        "coordinates": coordinates
-  //      }
-  //    };
-  //
-  //    var steps = 10;
-  //    var units = 'meters';
-  //
-  //    var node_circle = turf.circle(node_center, userRadius, steps, units);
-  //
-  //
-  //    var intersection = turf.intersect(small_polygon_route, node_circle);
-  //    if (intersection == null){
-  //      node.intersects = false;
-  //    }
-  //    else{
-  //      node.intersects = true;
-  //    }
-  //
-  //
-  // };
 
   var end = userTime;
   // take date as of 60 minutes ago for start date query
@@ -318,6 +285,9 @@ document.getElementById("deleteRoute").onclick = function () {
         dataType: 'json',
         success: function (data) {
           var response = data.data;
+          if (response.length == 0){
+            alert("No data was found at this time. Try using an earlier date / time.")
+          };
           var i = response.length - 1
           var last = response[i]
           var reading = last['results'][property_string]
