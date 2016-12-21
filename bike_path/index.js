@@ -3,6 +3,8 @@ var mapboxAccessToken = 'pk.eyJ1IjoicG1hY2siLCJhIjoiY2l0cTJkN3N3MDA4ZTJvbnhoeG12
 var map = L.map('map').setView([41.8781, -87.6298], 14);
 // default radius is 500 meters
 var userRadius = 500;
+var route_geojson;
+
 
 // iniitialze user features and update if checkbox status changes
 var userFeatures = ['temperature.temperature', 'gas_concentration.co2', 'gas_concentration.n2'];
@@ -48,12 +50,51 @@ function formatDate(date)
   return date.toISOString().slice(0,-1);
 };
 
-function makeMarker(node)
+function makeMarker(node, color)
 {
   // add marker object to map
-  var marker = L.marker([node.coordinates[1], node.coordinates[0]]).addTo(map);
-  marker.bindPopup('<b>' + node.name + '</b>' ).openPopup();
+  var marker = L.marker([node.coordinates[1], node.coordinates[0]],{icon: L.AwesomeMarkers.icon({icon: '', markerColor: color}) }).addTo(map);
+  marker.bindPopup('<b>' + node.name + '</b>' );
 };
+
+function determineIntersect(nodes, route_geojson)
+{
+  var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
+  for (var i = 0; i < nodes.length; i++) {
+
+    var node = nodes[i];
+    var coordinates = node.coordinates;
+    var node_center = {
+      "type": "Feature",
+      "properties": {
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": coordinates
+      }
+    };
+
+    var steps = 10;
+    var units = 'meters';
+
+    var node_circle = turf.circle(node_center, userRadius, steps, units);
+
+
+    var intersection = turf.intersect(small_polygon_route, node_circle);
+    if (intersection == null){
+      node.intersects = false;
+      makeMarker(node, 'blue');
+
+    }
+    else{
+      node.intersects = true;
+      makeMarker(node, 'green');
+    }
+ };
+};
+
+
+
 
 function addToTable(node_name, property_name, reading)
 {
@@ -126,7 +167,7 @@ createNodes();
 //add nodes as markers to map. Flip coordinates for leaflet marker object
 for (var i = 0; i < nodes.length; i++) {
 var node = nodes[i];
-makeMarker(node);
+makeMarker(node, 'blue');
 };
 
 
@@ -141,6 +182,9 @@ $( function() {
     slide: function( event, ui ) {
       $( "#amount" ).val( ui.value );
       userRadius = Number($( "#amount" ).val());
+      if (route_geojson != null){
+        determineIntersect(nodes, route_geojson);
+      };
     }
   });
   $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
@@ -169,7 +213,6 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
      });
      map.addControl(drawControl);
 
-    var route_geojson;
     map.on("draw:created", function (e) {
       if (drawnItems.getLayers().length > 0){
         drawnItems.clearLayers();
@@ -181,6 +224,9 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
 
       drawnItems.addLayer(route);
       route_geojson = route.toGeoJSON();
+      determineIntersect(nodes, route_geojson);
+
+
 
       //enable calculate if there is a route drawn and features and time are selected
       $('#calculate').removeAttr("disabled");
@@ -188,6 +234,12 @@ L.drawLocal.draw.toolbar.buttons.polyline = 'Draw your route!';
 
 
       $('#deleteRoute').removeAttr("disabled");
+
+
+
+
+
+
 });
 
 document.getElementById("deleteRoute").onclick = function () {
@@ -207,37 +259,36 @@ document.getElementById("deleteRoute").onclick = function () {
 
 
 
-   var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
-   for (var i = 0; i < nodes.length; i++) {
-     var node = nodes[i];
-     var coordinates = node.coordinates;
-     var node_center = {
-       "type": "Feature",
-       "properties": {
-         "marker-color": "#0f0"
-       },
-       "geometry": {
-         "type": "Point",
-         "coordinates": coordinates
-       }
-     };
-
-     var steps = 10;
-     var units = 'meters';
-
-     var node_circle = turf.circle(node_center, userRadius, steps, units);
-
-
-     var intersection = turf.intersect(small_polygon_route, node_circle);
-     if (intersection == null){
-       node.intersects = false;
-     }
-     else{
-       node.intersects = true;
-     }
-
-
-  };
+  //  var small_polygon_route = turf.buffer(route_geojson, 0.001, 'kilometers');
+  //  for (var i = 0; i < nodes.length; i++) {
+  //    var node = nodes[i];
+  //    var coordinates = node.coordinates;
+  //    var node_center = {
+  //      "type": "Feature",
+  //      "properties": {
+  //      },
+  //      "geometry": {
+  //        "type": "Point",
+  //        "coordinates": coordinates
+  //      }
+  //    };
+  //
+  //    var steps = 10;
+  //    var units = 'meters';
+  //
+  //    var node_circle = turf.circle(node_center, userRadius, steps, units);
+  //
+  //
+  //    var intersection = turf.intersect(small_polygon_route, node_circle);
+  //    if (intersection == null){
+  //      node.intersects = false;
+  //    }
+  //    else{
+  //      node.intersects = true;
+  //    }
+  //
+  //
+  // };
 
   var end = userTime;
   // take date as of 60 minutes ago for start date query
